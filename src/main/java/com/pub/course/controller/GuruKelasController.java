@@ -54,4 +54,43 @@ public class GuruKelasController {
         return guruKelasRepository.save(guruKelas);
     }
 
+    @PutMapping("/{id}")
+    public Object update(@PathVariable Integer id, @RequestBody GuruKelasDto dto) {
+
+        GuruKelas guruKelas = guruKelasRepository.findById(id).orElse(null);
+        if (guruKelas == null) {
+            return ResponseEntity.badRequest().body("ID Tidak Ditemukan");
+        }
+
+        Guru guru = guruRepository.findById(dto.getGuruId()).orElse(null);
+        if (guru == null) {
+            return ResponseEntity.badRequest().body("ID Guru Tidak Ditemukan");
+        }
+
+        Siswa siswa = siswaRepository.findById(dto.getSiswaId()).orElse(null);
+        if (siswa == null) {
+            return ResponseEntity.badRequest().body("ID Siswa Tidak Ditemukan");
+        }
+
+        guruKelas.setGuru(guru);
+        guruKelas.setSiswa(siswa);
+
+        return ResponseEntity.ok(guruKelasRepository.save(guruKelas));
+
+    }
+
+    @DeleteMapping("/{id}")
+    public Object delete(@PathVariable Integer id) {
+
+        GuruKelas guruKelas = guruKelasRepository.findById(id).orElse(null);
+
+        if (guruKelas == null) {
+            return ResponseEntity.badRequest().body("ID Tidak Ditemukan");
+        }
+
+        guruKelasRepository.delete(guruKelas);
+        return null;
+
+    }
+
 }

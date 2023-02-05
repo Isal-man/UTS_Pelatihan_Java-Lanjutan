@@ -7,6 +7,7 @@ import com.pub.course.model.Mata_Pelajaran;
 import com.pub.course.repository.KelasMataPelajaranRepository;
 import com.pub.course.repository.KelasRepository;
 import com.pub.course.repository.MataPelajaranRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +53,45 @@ public class KelasMataPelajaranController {
         kelas_mataPelajaran.setKelas(kelas);
         kelas_mataPelajaran.setMata_Pelajaran(mataPelajaran);
         return kelasMataPelajaranRepository.save(kelas_mataPelajaran);
+    }
+
+    @PutMapping("/{id}")
+    public Object update(@PathVariable Integer id, @RequestBody Kelas_MataPelajaranDto dto) {
+
+        Kelas_MataPelajaran kelasMataPelajaran = kelasMataPelajaranRepository.findById(id).orElse(null);
+        if (kelasMataPelajaran == null) {
+            return ResponseEntity.badRequest().body("ID Tidak Ditemukan");
+        }
+
+        Kelas kelas = kelasRepository.findById(dto.getKelasId()).orElse(null);
+        if (kelas == null) {
+            return ResponseEntity.badRequest().body("ID Kelas Tidak Ditemukan");
+        }
+
+        Mata_Pelajaran mataPelajaran = mataPelajaranRepository.findById(dto.getMataPelajaranId()).orElse(null);
+        if (mataPelajaran == null) {
+            return ResponseEntity.badRequest().body("ID Mapel Tidak Ditemukan");
+        }
+
+        kelasMataPelajaran.setKelas(kelas);
+        kelasMataPelajaran.setMata_Pelajaran(mataPelajaran);
+
+        return ResponseEntity.ok(kelasMataPelajaranRepository.save(kelasMataPelajaran));
+
+    }
+
+    @DeleteMapping("/{id}")
+    public Object delete(@PathVariable Integer id) {
+
+        Kelas_MataPelajaran kelasMataPelajaran = kelasMataPelajaranRepository.findById(id).orElse(null);
+
+        if (kelasMataPelajaran == null) {
+            return ResponseEntity.badRequest().body("ID Tidak Ditemukan");
+        }
+
+        kelasMataPelajaranRepository.delete(kelasMataPelajaran);
+        return null;
+
     }
 
 }

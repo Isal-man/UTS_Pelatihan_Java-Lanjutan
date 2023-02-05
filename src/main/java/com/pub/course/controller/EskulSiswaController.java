@@ -54,4 +54,41 @@ public class EskulSiswaController {
         return eskulSiswaRepository.save(eskul_Siswa);
     }
 
+    @PutMapping("/{id}")
+    public Object update(@PathVariable Integer id, @RequestBody Eskul_SiswaDto dto) {
+
+        Eskul_Siswa eskulSiswa = eskulSiswaRepository.findById(id).orElse(null);
+        if (eskulSiswa == null) {
+            return ResponseEntity.badRequest().body("ID Tidak Ditemukan");
+        }
+
+        Eskul eskul = eskulRepository.findById(id).orElse(null);
+        if (eskul == null) {
+            return ResponseEntity.badRequest().body("ID Eskul Tidak Ditemukan");
+        }
+
+        Siswa siswa = siswaRepository.findById(dto.getSiswaId()).orElse(null);
+        if (siswa == null) {
+            return ResponseEntity.badRequest().body("ID Siswa Tidak Ditemukan");
+        }
+
+        eskulSiswa.setEskul(eskul);
+        eskulSiswa.setSiswa(siswa);
+
+        return ResponseEntity.ok(eskulSiswaRepository.save(eskulSiswa));
+    }
+
+    @DeleteMapping("/{id}")
+    public Object delete(@PathVariable Integer id) {
+
+        Eskul_Siswa eskulSiswa = eskulSiswaRepository.findById(id).orElse(null);
+        if (eskulSiswa == null) {
+            return ResponseEntity.badRequest().body("ID Tidak Ditemukan");
+        }
+
+        eskulSiswaRepository.delete(eskulSiswa);
+        return null;
+
+    }
+
 }
